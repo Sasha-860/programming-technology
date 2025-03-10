@@ -1,0 +1,144 @@
+#include <iostream>
+#include <string>
+
+// Структура для хранения элементов списка
+struct Node {
+    std::string name;      // строковый тип
+    int number;            // целочислеый тип
+    double value;          // вещественый тип
+    Node* next = nullptr;  // Указатель на следующий элемент
+};
+
+// Класс для управления списком
+class List {
+private:
+    Node* head = nullptr;  // Голова списка
+
+public:
+    // Добавление элемента в начало списка
+    void addToBeginning(const std::string& name, int number, double value) {
+        Node* newNode = new Node;
+        newNode->name = name;
+        newNode->number = number;
+        newNode->value = value;
+        newNode->next = head;
+        head = newNode;
+    }
+
+    // Добавление элемента в конец списка
+    void addToEnd(const std::string& name, int number, double value) {
+        if (!head) {
+            addToBeginning(name, number, value);
+            return;
+        }
+        Node* current = head;
+        while (current->next != nullptr) {
+            current = current->next;
+        }
+        Node* newNode = new Node;
+        newNode->name = name;
+        newNode->number = number;
+        newNode->value = value;
+        current->next = newNode;
+    }
+
+    // Добавление элемента после заданного имени
+    void addAfterName(const std::string& targetName, const std::string& name, int number, double value) {
+        Node* current = head;
+        while (current && current->name != targetName) {
+            current = current->next;
+        }
+        if (current) {
+            Node* newNode = new Node;
+            newNode->name = name;
+            newNode->number = number;
+            newNode->value = value;
+            newNode->next = current->next;
+            current->next = newNode;
+        }
+    }
+
+    // Добавление элемента перед заданным именем
+    void addBeforeName(const std::string& targetName, const std::string& name, int number, double value) {
+        if (!head || head->name == targetName) {
+            addToBeginning(name, number, value);
+            return;
+        }
+        Node* previous = nullptr;
+        Node* current = head;
+        while (current && current->name != targetName) {
+            previous = current;
+            current = current->next;
+        }
+        if (current) {
+            Node* newNode = new Node;
+            newNode->name = name;
+            newNode->number = number;
+            newNode->value = value;
+            newNode->next = current;
+            previous->next = newNode;
+        }
+        
+    }
+
+    // Удаление элемента с заданным именем
+    void removeByName(const std::string& name) {
+        if (head->name == name) {
+            Node* temp = head;
+            head = head->next;
+            delete temp;
+            return;
+        }
+        Node* previous = nullptr;
+        Node* current = head;
+        while (current && current->name != name) {
+            previous = current;
+            current = current->next;
+        }
+        if (current) {
+            previous->next = current->next;
+            delete current;
+        }
+    }
+
+    // Вывод содержимого списка на экран
+    void printList() {
+        Node* current = head;
+        while (current) {
+            std::cout << "Имя: " << current->name << ", Номер: " << current->number << ", Значение: " << current->value << std::endl;
+            current = current->next;
+        }
+    }
+
+    ~List() {
+        Node* current = head;
+        while (current) {
+            Node* temp = current;
+            current = current->next;
+            delete temp;
+        }
+    }
+};
+
+int main() {
+    List list;
+
+    // Добавляем элементы в список
+    list.addToBeginning("Иван", 1234, 12.34);   // Добавление в начало
+    list.addToEnd("Петр", 2345, 23.45);         // Добавление в конец
+    list.addAfterName("Иван", "Сергей", 3456, 34.56);  // Добавление после Ивана
+    list.addBeforeName("Петр", "Алексей", 4567, 45.67); // Добавление перед Петром
+
+    // Выводим содержимое списка
+    std::cout << "Содержание списка:" << std::endl;
+    list.printList();
+
+    // Удаляем элемент с именем "Сергей"
+    list.removeByName("Сергей");
+
+    // Выводим обновленное содержимое списка
+    std::cout << "\nОбновленное содержание списка:" << std::endl;
+    list.printList();
+
+    return 0;
+}
