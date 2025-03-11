@@ -12,7 +12,7 @@ struct Node {
 // Класс для управления списком
 class List {
 private:
-    Node* head = nullptr;  // Голова списка
+    Node* head = nullptr;
 
 public:
     // Добавление элемента в начало списка
