@@ -105,7 +105,7 @@ public:
     void printList() {
         Node* current = head;
         while (current) {
-            std::cout << "Name: " << current->name << ", Number: " << current->number << ", meaning: " << current->value << std::endl;
+            std::cout << "Name: " << current->name << ", Number: " << current->number << ", value: " << current->value << std::endl;
             current = current->next;
         }
     }
