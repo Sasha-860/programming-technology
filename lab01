@@ -105,39 +105,32 @@ public:
     void printList() {
         Node* current = head;
         while (current) {
-            std::cout << "Имя: " << current->name << ", Номер: " << current->number << ", Значение: " << current->value << std::endl;
+            std::cout << "Name: " << current->name << ", Number: " << current->number << ", meaning: " << current->value << std::endl;
             current = current->next;
         }
     }
 
-    ~List() {
-        Node* current = head;
-        while (current) {
-            Node* temp = current;
-            current = current->next;
-            delete temp;
-        }
-    }
+
 };
 
 int main() {
     List list;
 
     // Добавляем элементы в список
-    list.addToBeginning("Иван", 1234, 12.34);   // Добавление в начало
-    list.addToEnd("Петр", 2345, 23.45);         // Добавление в конец
-    list.addAfterName("Иван", "Сергей", 3456, 34.56);  // Добавление после Ивана
-    list.addBeforeName("Петр", "Алексей", 4567, 45.67); // Добавление перед Петром
+    list.addToBeginning("Ivan", 1234, 11.14);   // Добавление в начало
+    list.addToEnd("Peter", 2345, 22.45);         // Добавление в конец
+    list.addAfterName("Ivan", "Sergey", 3456, 33.56);  // Добавление после Ивана
+    list.addBeforeName("Peter", "Alex", 4567, 44.67); // Добавление перед Петром
 
     // Выводим содержимое списка
-    std::cout << "Содержание списка:" << std::endl;
+    std::cout << "List content:" << std::endl;
     list.printList();
 
     // Удаляем элемент с именем "Сергей"
-    list.removeByName("Сергей");
+    list.removeByName("Sergey");
 
     // Выводим обновленное содержимое списка
-    std::cout << "\nОбновленное содержание списка:" << std::endl;
+    std::cout << "\n Updated list content:" << std::endl;
     list.printList();
 
     return 0;
