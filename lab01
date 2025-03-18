@@ -4,31 +4,31 @@
 // Структура для хранения элементов списка
 struct Node {
     std::string name;      // строковый тип
-    int number;            // целочислеый тип
-    double value;          // вещественый тип
+    int age;            // целочислеый тип
+    double weight;          // вещественый тип
     Node* next = nullptr;  // Указатель на следующий элемент
 };
 
 // Класс для управления списком
 class List {
 private:
-    Node* head = nullptr;
+    Node* head = nullptr;  // Голова списка
 
 public:
     // Добавление элемента в начало списка
-    void addToBeginning(const std::string& name, int number, double value) {
+    void addToBeginning(const std::string& name, int age, double weight) {
         Node* newNode = new Node;
         newNode->name = name;
-        newNode->number = number;
-        newNode->value = value;
+        newNode->age = age;
+        newNode->weight = weight;
         newNode->next = head;
         head = newNode;
     }
 
     // Добавление элемента в конец списка
-    void addToEnd(const std::string& name, int number, double value) {
+    void addToEnd(const std::string& name, int age, double weight) {
         if (!head) {
-            addToBeginning(name, number, value);
+            addToBeginning(name, age, weight);
             return;
         }
         Node* current = head;
@@ -37,13 +37,13 @@ public:
         }
         Node* newNode = new Node;
         newNode->name = name;
-        newNode->number = number;
-        newNode->value = value;
+        newNode->age = age;
+        newNode->weight = weight;
         current->next = newNode;
     }
 
     // Добавление элемента после заданного имени
-    void addAfterName(const std::string& targetName, const std::string& name, int number, double value) {
+    void addAfterName(const std::string& targetName, const std::string& name, int age, double weight) {
         Node* current = head;
         while (current && current->name != targetName) {
             current = current->next;
@@ -51,17 +51,17 @@ public:
         if (current) {
             Node* newNode = new Node;
             newNode->name = name;
-            newNode->number = number;
-            newNode->value = value;
+            newNode->age = age;
+            newNode->weight = weight;
             newNode->next = current->next;
             current->next = newNode;
         }
     }
 
     // Добавление элемента перед заданным именем
-    void addBeforeName(const std::string& targetName, const std::string& name, int number, double value) {
+    void addBeforeName(const std::string& targetName, const std::string& name, int age, double weight) {
         if (!head || head->name == targetName) {
-            addToBeginning(name, number, value);
+            addToBeginning(name, age, weight);
             return;
         }
         Node* previous = nullptr;
@@ -73,8 +73,8 @@ public:
         if (current) {
             Node* newNode = new Node;
             newNode->name = name;
-            newNode->number = number;
-            newNode->value = value;
+            newNode->age = age;
+            newNode->weight = weight;
             newNode->next = current;
             previous->next = newNode;
         }
@@ -105,7 +105,7 @@ public:
     void printList() {
         Node* current = head;
         while (current) {
-            std::cout << "Name: " << current->name << ", Number: " << current->number << ", value: " << current->value << std::endl;
+            std::cout << "Name: " << current->name << ", age: " << current->age << ", weight: " << current->weight << std::endl;
             current = current->next;
         }
     }
@@ -117,10 +117,10 @@ int main() {
     List list;
 
     // Добавляем элементы в список
-    list.addToBeginning("Ivan", 1234, 11.14);   // Добавление в начало
-    list.addToEnd("Peter", 2345, 22.45);         // Добавление в конец
-    list.addAfterName("Ivan", "Sergey", 3456, 33.56);  // Добавление после Ивана
-    list.addBeforeName("Peter", "Alex", 4567, 44.67); // Добавление перед Петром
+    list.addToBeginning("Ivan", 20, 70.14);   // Добавление в начало
+    list.addToEnd("Peter", 19, 72.82);         // Добавление в конец
+    list.addAfterName("Ivan", "Sergey", 35, 91.56);  // Добавление после Ивана
+    list.addBeforeName("Peter", "Alex", 41, 80.67); // Добавление перед Петром
 
     // Выводим содержимое списка
     std::cout << "List content:" << std::endl;
