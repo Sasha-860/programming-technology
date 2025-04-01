@@ -1,0 +1,237 @@
+#include <iostream>
+using namespace std;
+
+class vect {
+public:
+    int dim;      // Размерность вектора
+    double* b;    // Массив элементов вектора
+    int num;      // Номер объекта
+    static int count;   // Количество созданных объектов
+
+    // Конструктор по умолчанию
+    vect() : dim(0), b(nullptr), num(count++) {
+        cout << "Создан объект вектора №" << num << endl;
+    }
+
+    // Конструктор с параметром размерности
+    vect(int n) : dim(n), b(new double[n]), num(count++) {
+        for (int i = 0; i < n; ++i)
+            b[i] = 0.0;
+        cout << "Создан объект вектора №" << num << " размерностью " << dim << endl;
+    }
+
+    // Конструктор копирования
+    vect(vect& other) : dim(other.dim), b(new double[other.dim]), num(count++) {
+        for (int i = 0; i < dim; ++i)
+            b[i] = other.b[i];
+        cout << "Создан объект вектора №" << num << " путем копирования объекта №" << other.num << endl;
+    }
+
+    // Деструктор
+    ~vect() {
+        delete[] b;
+        cout << "Удалён объект вектора №" << num << endl;
+    }
+
+    // сложения векторов
+    vect operator+(vect& rhs) {
+        vect result(dim);
+        for (int i = 0; i < dim; ++i)
+            result.b[i] = b[i] + rhs.b[i];
+        cout << "Выполнено сложение векторов №" << num << " и №" << rhs.num << ". Получен результат №" << result.num << "." << endl;
+        return result;
+    }
+
+    // вычитания векторов
+    vect operator-(vect& rhs) {
+        vect result(dim);
+        for (int i = 0; i < dim; ++i)
+            result.b[i] = b[i] - rhs.b[i];
+        cout << "Выполнено вычитание векторов №" << num << " и №" << rhs.num << ". Получен результат №" << result.num << "." << endl;
+        return result;
+    }
+
+    // минус
+    vect operator-() {
+        vect result(dim);
+        for (int i = 0; i < dim; ++i)
+            result.b[i] = -b[i];
+        cout << "Применена операция отрицания к вектору №" << num << ". Получен результат №" << result.num << "." << endl;
+        return result;
+    }
+
+    // Умножение вектора на скаляр
+    vect operator*(double scalar) {
+        vect result(dim);
+        for (int i = 0; i < dim; ++i)
+            result.b[i] = b[i] * scalar;
+        cout << "Выполнено умножение вектора №" << num << " на скаляр. Получен результат №" << result.num << "." << endl;
+        return result;
+    }
+
+    // Скалярное произведение векторов
+    double operator*(vect& rhs) {
+        double result = 0.0;
+        for (int i = 0; i < dim; ++i)
+            result += b[i] * rhs.b[i];
+        cout << "Выполнено скалярное произведение векторов №" << num << " и №" << rhs.num << ". Результат: " << result << endl;
+        return result;
+    }
+
+    // Присваивание одного вектора другому
+    void operator=(vect& rhs) {
+        if (this == &rhs)
+            return;
+        if (dim != rhs.dim) {
+            delete[] b;
+            dim = rhs.dim;
+            b = new double[dim];
+        }
+        for (int i = 0; i < dim; ++i)
+            b[i] = rhs.b[i];
+        cout << "Присвоен вектор №" << rhs.num << " вектору №" << num << "." << endl;
+    }
+};
+
+// Статическое поле для подсчета количества объектов
+int vect::count = 0;
+
+class matr {
+public:
+    // Поля класса
+    int rows, cols;       // Размеры матрицы
+    double** a;           // Двумерный массив элементов матрицы
+    int num;              // Номер объекта
+    static int count;     // Количество созданных объектов
+
+    // Конструктор по умолчанию
+    matr() : rows(0), cols(0), a(nullptr), num(count++) {
+        cout << "Создана матрица №" << num << endl;
+    }
+
+    // Конструктор с параметрами размеров
+    matr(int r, int c) : rows(r), cols(c), a(new double* [rows]), num(count++) {
+        for (int i = 0; i < rows; ++i)
+            a[i] = new double[cols];
+        for (int i = 0; i < rows; ++i)
+            for (int j = 0; j < cols; ++j)
+                a[i][j] = 0.0;
+        cout << "Создана матрица №" << num << " размером " << rows << "x" << cols << endl;
+    }
+
+    // Конструктор копирования
+    matr(matr& other) : rows(other.rows), cols(other.cols), a(new double* [rows]), num(count++) {
+        for (int i = 0; i < rows; ++i)
+            a[i] = new double[cols];
+        for (int i = 0; i < rows; ++i)
+            for (int j = 0; j < cols; ++j)
+                a[i][j] = other.a[i][j];
+        cout << "Создана матрица №" << num << " путем копирования матрицы №" << other.num << endl;
+    }
+
+    // Деструктор
+    ~matr() {
+        for (int i = 0; i < rows; ++i)
+            delete[] a[i];
+        delete[] a;
+        cout << "Удалена матрица №" << num << endl;
+    }
+
+    // Оператор сложения матриц
+    matr operator+(matr& rhs) {
+        matr result(rows, cols);
+        for (int i = 0; i < rows; ++i)
+            for (int j = 0; j < cols; ++j)
+                result.a[i][j] = a[i][j] + rhs.a[i][j];
+        cout << "Выполнено сложение матриц №" << num << " и №" << rhs.num << ". Получена матрица №" << result.num << "." << endl;
+        return result;
+    }
+
+    // Оператор вычитания матриц
+    matr operator-(matr& rhs) {
+        matr result(rows, cols);
+        for (int i = 0; i < rows; ++i)
+            for (int j = 0; j < cols; ++j)
+                result.a[i][j] = a[i][j] - rhs.a[i][j];
+        cout << "Выполнено вычитание матриц №" << num << " и №" << rhs.num << ". Получена матрица №" << result.num << "." << endl;
+        return result;
+    }
+
+    // Унарный минус
+    matr operator-() {
+        matr result(rows, cols);
+        for (int i = 0; i < rows; ++i)
+            for (int j = 0; j < cols; ++j)
+                result.a[i][j] = -a[i][j];
+        cout << "Применена операция отрицания к матрице №" << num << ". Получена матрица №" << result.num << "." << endl;
+        return result;
+    }
+
+    // Умножение матрицы на скаляр
+    matr operator*(double scalar) {
+        matr result(rows, cols);
+        for (int i = 0; i < rows; ++i)
+            for (int j = 0; j < cols; ++j)
+                result.a[i][j] = a[i][j] * scalar;
+        cout << "Выполнено умножение матрицы №" << num << " на скаляр. Получена матрица №" << result.num << "." << endl;
+        return result;
+    }
+
+    // Умножение матрицы на вектор
+    vect operator*(vect& rhs) {
+        vect result(rows);
+        for (int i = 0; i < rows; ++i) {
+            double sum = 0.0;
+            for (int j = 0; j < cols; ++j)
+                sum += a[i][j] * rhs.b[j];
+            result.b[i] = sum;
+        }
+        cout << "Выполнено умножение матрицы №" << num << " на вектор №" << rhs.num << ". Получен результат №" << result.num << "." << endl;
+        return result;
+    }
+
+    // Присваивание одной матрицы другой
+    void operator=(matr& rhs) {
+        if (this == &rhs)
+            return;
+        if (rows != rhs.rows || cols != rhs.cols) {
+            for (int i = 0; i < rows; ++i)
+                delete[] a[i];
+            delete[] a;
+            rows = rhs.rows;
+            cols = rhs.cols;
+            a = new double* [rows];
+            for (int i = 0; i < rows; ++i)
+                a[i] = new double[cols];
+        }
+        for (int i = 0; i < rows; ++i)
+            for (int j = 0; j < cols; ++j)
+                a[i][j] = rhs.a[i][j];
+        cout << "Присвоена матрица №" << rhs.num << " матрице №" << num << "." << endl;
+    }
+};
+
+// Статическое поле для подсчета количества объектов
+int matr::count = 0;
+
+int main() {
+    // Создание векторов
+    vect v1(3);          // Создаем вектор длиной 3
+    vect v2(v1);         // Копируем вектор v1 в v2
+    vect v3 = v1 + v2;   // Сложим два вектора
+    vect v4 = v1 - v2;   // Вычтем один вектор из другого
+    vect v5 = -v1;       // Применяем операцию отрицания
+    vect v6 = v1 * 2.0;  // Умножаем вектор на скаляр
+    double dot_product = v1 * v2;  // Вычисляем скалярное произведение
+
+    // Создание матриц
+    matr m1(2, 3);               // Создаем матрицу 2x3
+    matr m2(m1);                 // Копируем матрицу m1 в m2
+    matr m3 = m1 + m2;           // Сложим две матрицы
+    matr m4 = m1 - m2;           // Вычтем одну матрицу из другой
+    matr m5 = -m1;               // Применяем операцию отрицания
+    matr m6 = m1 * 2.0;          // Умножаем матрицу на скаляр
+    vect mv_result = m1 * v1;    // Умножаем матрицу на вектор
+
+    return 0;
+}
