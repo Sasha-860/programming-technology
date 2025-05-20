@@ -1,0 +1,258 @@
+#include <cmath>
+#include <iostream>
+#include <vector>
+
+class Point {
+public:
+  virtual void draw() const = 0;
+  virtual void remove() = 0;
+  virtual void move(double dx, double dy) = 0;
+  virtual void rotate(double angle, double centerX = 0, double centerY = 0) = 0;
+  virtual void reflectX() = 0;
+  virtual void reflectY() = 0;
+  virtual ~Point() {}
+};
+
+class Shape {
+protected:
+  std::vector<std::pair<double, double>> vertices;
+
+public:
+  void draw() const override {
+    std::cout << "Рисование фигуры с вершинами:" << std::endl;
+    for (const auto &vertex : vertices) {
+      std::cout << "(" << vertex.first << ", " << vertex.second << ")"
+                << std::endl;
+    }
+  }
+
+  void remove() override {
+    std::cout << "Удаление фигуры." << std::endl;
+    vertices.clear();
+  }
+
+  void move(double dx, double dy) override {
+    for (auto &vertex : vertices) {
+      vertex.first += dx;
+      vertex.second += dy;
+    }
+  }
+
+  void rotate(double angle, double centerX = 0, double centerY = 0) override {
+    double rad = angle * M_PI / 180.0;
+    double cosA = cos(rad);
+    double sinA = sin(rad);
+    
+    for (auto &vertex : vertices) {
+      double x = vertex.first - centerX;
+      double y = vertex.second - centerY;
+      
+      double newX = x * cosA - y * sinA;
+      double newY = x * sinA + y * cosA;
+      
+      vertex.first = newX + centerX;
+      vertex.second = newY + centerY;
+    }
+    std::cout << "Поворот фигуры на " << angle << " градусов вокруг точки (" 
+              << centerX << ", " << centerY << ")." << std::endl;
+  }
+
+  void reflectX() override {
+    for (auto &vertex : vertices) {
+      vertex.second = -vertex.second;
+    }
+    std::cout << "Отражение фигуры по оси X." << std::endl;
+  }
+
+  void reflectY() override {
+    for (auto &vertex : vertices) {
+      vertex.first = -vertex.first;
+    }
+    std::cout << "Отражение фигуры по оси Y." << std::endl;
+  }
+};
+
+class Line : public Shape {
+public:
+  Line(std::pair<double, double> start, std::pair<double, double> end) {
+    vertices.push_back(start);
+    vertices.push_back(end);
+  }
+
+  void draw() const override {
+    std::cout << "Рисование линии от (" << vertices[0].first << ", "
+              << vertices[0].second << ") до (" << vertices[1].first << ", "
+              << vertices[1].second << ")." << std::endl;
+  }
+};
+
+class Square : public Shape {
+protected:
+  double sideLength;
+
+public:
+  Square(std::pair<double, double> topLeft, double length)
+      : sideLength(length) {
+    vertices.push_back(topLeft);
+    vertices.push_back({topLeft.first + length, topLeft.second});
+    vertices.push_back({topLeft.first + length, topLeft.second - length});
+    vertices.push_back({topLeft.first, topLeft.second - length});
+  }
+
+  void draw() const override {
+    std::cout << "Рисование квадрата со стороной " << sideLength
+              << " и верхней левой вершиной в (" << vertices[0].first << ", "
+              << vertices[0].second << ")." << std::endl;
+  }
+};
+
+class Parallelogram : public Shape {
+protected:
+  double sideA;
+  double sideB;
+  double angle;
+
+public:
+  Parallelogram(std::pair<double, double> vertex, double a, double b,
+                double ang)
+      : sideA(a), sideB(b), angle(ang) {
+    vertices.push_back(vertex);
+    vertices.push_back({vertex.first + sideA, vertex.second});
+    vertices.push_back({vertex.first + sideA - sideB * cos(angle * M_PI / 180),
+                        vertex.second - sideB * sin(angle * M_PI / 180)});
+    vertices.push_back({vertex.first - sideB * cos(angle * M_PI / 180),
+                        vertex.second - sideB * sin(angle * M_PI / 180)});
+  }
+
+  void draw() const override {
+    std::cout << "Рисование параллелограмма с вершинами:" << std::endl;
+    for (const auto &vertex : vertices) {
+      std::cout << "(" << vertex.first << ", " << vertex.second << ")"
+                << std::endl;
+    }
+  }
+};
+
+class Rhombus : public Shape {
+protected:
+  double sideLength;
+  double angle;
+  public:
+  Rhombus(std::pair<double, double> vertex, double length, double ang)
+      : sideLength(length), angle(ang) {
+    vertices.push_back(vertex);
+    vertices.push_back({vertex.first + sideLength, vertex.second});
+    vertices.push_back(
+        {vertex.first + sideLength - sideLength * cos(angle * M_PI / 180),
+         vertex.second - sideLength * sin(angle * M_PI / 180)});
+    vertices.push_back({vertex.first - sideLength * cos(angle * M_PI / 180),
+                        vertex.second - sideLength * sin(angle * M_PI / 180)});
+  }
+
+  void draw() const override {
+    std::cout << "Рисование ромба с вершинами:" << std::endl;
+    for (const auto &vertex : vertices) {
+      std::cout << "(" << vertex.first << ", " << vertex.second << ")"<< std::endl;
+    }
+  }
+};
+
+class Rectangle : public Shape {
+protected:
+  double width;
+  double height;
+
+public:
+  Rectangle(std::pair<double, double> topLeft, double w, double h)
+      : width(w), height(h) {
+    vertices.push_back(topLeft);
+    vertices.push_back({topLeft.first + w, topLeft.second});
+    vertices.push_back({topLeft.first + w, topLeft.second - h});
+    vertices.push_back({topLeft.first, topLeft.second - h});
+  }
+
+  void draw() const override {
+    std::cout << "Рисование прямоугольника шириной " << width << ", высотой "
+              << height << " и верхней левой вершиной в (" << vertices[0].first
+              << ", " << vertices[0].second << ")." << std::endl;
+  }
+};
+
+class SquareParallelogram : public Rectangle {
+public:
+  SquareParallelogram(std::pair<double, double> topLeft, double sideLength)
+      : Rectangle(topLeft, sideLength, sideLength) {}
+
+  void draw() const override {
+    std::cout << "Рисование квадратного параллелограмма со стороной " << width
+              << " и верхней левой вершиной в (" << vertices[0].first << ", "
+              << vertices[0].second << ")." << std::endl;
+  }
+};
+
+void rotateShape(Point &shape, double angle, double centerX = 0, double centerY = 0) {
+  shape.rotate(angle, centerX, centerY);
+}
+
+void reflectOverX(Point &shape) {
+  shape.reflectX();
+}
+
+void reflectOverY(Point &shape) {
+  shape.reflectY();
+}
+
+int main() {
+  Line line({2, 3}, {5, 7});
+  Square square({1, 1}, 3);
+  Rectangle rectangle({2, 4}, 5, 3);
+  SquareParallelogram squareParallelogram({0, 2}, 4);
+  Parallelogram parallelogram({1, 1}, 4, 3, 60);
+  Rhombus rhombus({0, 0}, 3, 45);
+
+  // Тестирование поворота
+  std::cout << "Исходная линия:\n";
+  line.draw();
+  rotateShape(line, 30); // Поворот на 30 градусов вокруг начала координат
+  std::cout << "После поворота:\n";
+  line.draw();
+
+  // Тестирование отражения
+  std::cout << "\nИсходный квадрат:\n";
+  square.draw();
+  reflectOverX(square);
+  std::cout << "После отражения по X:\n";
+  square.draw();
+  reflectOverY(square);
+  std::cout << "После отражения по Y:\n";
+  square.draw();
+
+  // Тестирование поворота вокруг точки
+  std::cout << "\nИсходный прямоугольник:\n";
+  rectangle.draw();
+  rotateShape(rectangle, 45, 4.5, 2.5); // Поворот на 45 градусов вокруг центра
+  std::cout << "После поворота вокруг центра:\n";
+  rectangle.draw();
+
+  // Тестирование с параллелограммом
+  std::cout << "\nИсходный параллелограмм:\n";
+  parallelogram.draw();
+  rotateShape(parallelogram, 15);
+  std::cout << "После поворота:\n";
+  parallelogram.draw();
+  reflectOverX(parallelogram);
+  std::cout << "После отражения по X:\n";
+  parallelogram.draw();
+
+  // Тестирование с ромбом
+  std::cout << "\nИсходный ромб:\n";
+  rhombus.draw();
+  rotateShape(rhombus, 60, 1.5, -1.5);
+  std::cout << "После поворота:\n";
+  rhombus.draw();
+  reflectOverY(rhombus);
+  std::cout << "После отражения по Y:\n";
+  rhombus.draw();
+
+  return 0;
+}
